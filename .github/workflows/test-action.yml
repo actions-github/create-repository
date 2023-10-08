@@ -1,0 +1,36 @@
+name: Test Action
+on: 
+  workflow_dispatch:
+    inputs:
+      repo-name:
+        description: 'What is the name of the repository?'
+        required: true
+        default: ''
+      token:
+        description: 'Personal access token'
+        required: true
+        default: ''
+      private:
+        description: 'Is private repository?'
+        type: boolean
+        default: false
+jobs:
+  run-action:
+    runs-on: ubuntu-latest
+    name: Creating Repository
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Run my action\
+        id: create-repo
+        uses: ./
+        with:
+          repo-name: '${{ github.event.inputs.repo-name }}'
+          token: '${{ github.event.inputs.token }}'
+          private: '${{ github.event.inputs.private }}'
+      - name: Log URL to the repo
+        run: echo "The new repo is ${{ steps.create-repo.outputs.repo-url }}"
